@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:glove_e.ViewModels"
+             x:Class="glove_e.Views.OnboardingPage"
+             x:DataType="vm:OnboardingViewModel"
+             Shell.NavBarIsVisible="False"
+             Title="Bienvenida">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="18" VerticalOptions="Center">
+
+            <Label Text="🧤" FontSize="60" HorizontalOptions="Center" />
+            <Label Text="Bienvenido a Glove-E"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+            <Label Text="Antes de empezar, configura tus datos y tu contacto de emergencia. A esa persona se le enviará un mensaje cuando uses el botón de auxilio."
+                   FontSize="14"
+                   TextColor="Gray"
+                   HorizontalTextAlignment="Center" />
+
+            <Label Text="Tu nombre" FontAttributes="Bold" Margin="0,10,0,0" />
+            <Entry Text="{Binding UserName}" Placeholder="Ej. Nehemías" />
+
+            <Label Text="Nombre del contacto de emergencia" FontAttributes="Bold" />
+            <Entry Text="{Binding ContactName}" Placeholder="Ej. Mamá" />
+
+            <Label Text="Teléfono del contacto" FontAttributes="Bold" />
+            <Entry Text="{Binding ContactPhone}" Placeholder="Ej. 5512345678" Keyboard="Telephone" />
+
+            <Button Text="Comenzar"
+                    Command="{Binding ContinueCommand}"
+                    HeightRequest="55"
+                    FontSize="18"
+                    Margin="0,20,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

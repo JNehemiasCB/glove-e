@@ -1,0 +1,346 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>glove-e</name>
+    </assembly>
+    <members>
+        <member name="M:glove_e.AppShell.OnShellLoaded(System.Object,System.EventArgs)">
+            <summary>
+            Si la app ya fue configurada, salta el onboarding
+            y va directo a las pestañas principales.
+            </summary>
+        </member>
+        <member name="T:glove_e.Models.AlertEvent">
+            <summary>Registro de una alerta de auxilio enviada (simulada) al contacto de emergencia.</summary>
+        </member>
+        <member name="T:glove_e.Models.DistanceReading">
+            <summary>Una lectura de distancia recibida del guante por BLE.</summary>
+        </member>
+        <member name="P:glove_e.Models.DistanceReading.Centimeters">
+            <summary>Distancia en centímetros.</summary>
+        </member>
+        <member name="P:glove_e.Models.DistanceReading.Estado">
+            <summary>Seguro / Advertencia / Crítico.</summary>
+        </member>
+        <member name="M:glove_e.Services.IAlertService.SendEmergencyAlertAsync">
+            <summary>Simula el envío de un SMS al contacto de emergencia y lo registra en la BD.</summary>
+        </member>
+        <member name="T:glove_e.Services.AlertService">
+            <summary>
+            Servicio de alerta de auxilio. En esta versión el envío es SIMULADO:
+            no manda un SMS real, solo lo registra como si se hubiera enviado.
+            Para hacerlo real bastaría reemplazar el Task.Delay por un proveedor
+            de SMS (Twilio, SMS nativo, etc.).
+            </summary>
+        </member>
+        <member name="E:glove_e.Services.IBleService.DistanceReceived">
+            <summary>Se dispara con cada distancia (cm) recibida del guante.</summary>
+        </member>
+        <member name="E:glove_e.Services.IBleService.ConnectionChanged">
+            <summary>true = conectado, false = desconectado.</summary>
+        </member>
+        <member name="T:glove_e.Services.BleService">
+            <summary>
+            Comunicación BLE con el ESP32 usando Plugin.BLE.
+            Busca el dispositivo "GloveE", se suscribe a las notificaciones de
+            distancia y permite escribir la configuración de rangos.
+            </summary>
+        </member>
+        <member name="M:glove_e.Services.BleService.SendConfigAsync(System.Int32,System.Int32)">
+            <summary>Envía "MAX:x;CRIT:y" a la característica de configuración del ESP32.</summary>
+        </member>
+        <member name="M:glove_e.Services.BleService.EnsurePermissionsAsync">
+            <summary>Pide los permisos de Bluetooth en tiempo de ejecución (Android).</summary>
+        </member>
+        <member name="T:glove_e.Services.BluetoothPermissions">
+            <summary>
+            Permiso compuesto para BLE:
+             - Android 12+ : BLUETOOTH_SCAN + BLUETOOTH_CONNECT
+             - Android 11- : ACCESS_FINE_LOCATION
+            </summary>
+        </member>
+        <member name="T:glove_e.Services.DatabaseService">
+            <summary>Persistencia local con SQLite (sqlite-net-pcl).</summary>
+        </member>
+        <member name="T:glove_e.Services.ISettingsService">
+            <summary>
+            Configuración persistente de la app (usa Preferences, clave-valor).
+            Aquí viven el contacto de emergencia y los rangos del guante.
+            </summary>
+        </member>
+        <member name="P:glove_e.Services.SettingsService.RangoMaximo">
+            <summary>Distancia (cm) donde empieza la advertencia. Igual que RANGO_MAXIMO del firmware.</summary>
+        </member>
+        <member name="P:glove_e.Services.SettingsService.RangoCritico">
+            <summary>Distancia (cm) del estado crítico. Igual que RANGO_CRITICO del firmware.</summary>
+        </member>
+        <member name="T:glove_e.ViewModels.HistoryViewModel">
+            <summary>ViewModel del historial: lecturas de distancia y alertas enviadas.</summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:glove_e.ViewModels.HistoryViewModel.MostrandoAlertas">
+            <inheritdoc cref="F:glove_e.ViewModels.HistoryViewModel.mostrandoAlertas"/>
+        </member>
+        <member name="P:glove_e.ViewModels.HistoryViewModel.IsBusy">
+            <inheritdoc cref="F:glove_e.ViewModels.HistoryViewModel.isBusy"/>
+        </member>
+        <member name="F:glove_e.ViewModels.HistoryViewModel.loadCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.HistoryViewModel.LoadCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.HistoryViewModel.LoadCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.HistoryViewModel.LoadAsync"/>.</summary>
+        </member>
+        <member name="F:glove_e.ViewModels.HistoryViewModel.verDistanciasCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.HistoryViewModel.VerDistanciasCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.HistoryViewModel.VerDistanciasCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.HistoryViewModel.VerDistancias"/>.</summary>
+        </member>
+        <member name="F:glove_e.ViewModels.HistoryViewModel.verAlertasCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.HistoryViewModel.VerAlertasCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.HistoryViewModel.VerAlertasCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.HistoryViewModel.VerAlertas"/>.</summary>
+        </member>
+        <member name="F:glove_e.ViewModels.HistoryViewModel.clearReadingsCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.HistoryViewModel.ClearReadingsCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.HistoryViewModel.ClearReadingsCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.HistoryViewModel.ClearReadingsAsync"/>.</summary>
+        </member>
+        <member name="T:glove_e.ViewModels.MainViewModel">
+            <summary>
+            ViewModel de la pantalla principal: conexión BLE, distancia en vivo
+            y botón de alerta de emergencia.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.EstadoBrush">
+            <summary>Versión Brush del color, para el borde del indicador.</summary>
+        </member>
+        <member name="M:glove_e.ViewModels.MainViewModel.RefreshSettings">
+            <summary>Llamado desde OnAppearing de la página.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.IsConnected">
+            <inheritdoc cref="F:glove_e.ViewModels.MainViewModel.isConnected"/>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.IsBusy">
+            <inheritdoc cref="F:glove_e.ViewModels.MainViewModel.isBusy"/>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.ConnectButtonText">
+            <inheritdoc cref="F:glove_e.ViewModels.MainViewModel.connectButtonText"/>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.DistanciaTexto">
+            <inheritdoc cref="F:glove_e.ViewModels.MainViewModel.distanciaTexto"/>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.EstadoTexto">
+            <inheritdoc cref="F:glove_e.ViewModels.MainViewModel.estadoTexto"/>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.EstadoColor">
+            <inheritdoc cref="F:glove_e.ViewModels.MainViewModel.estadoColor"/>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.Saludo">
+            <inheritdoc cref="F:glove_e.ViewModels.MainViewModel.saludo"/>
+        </member>
+        <member name="F:glove_e.ViewModels.MainViewModel.toggleConnectionCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.MainViewModel.ToggleConnectionCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.ToggleConnectionCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.MainViewModel.ToggleConnectionAsync"/>.</summary>
+        </member>
+        <member name="F:glove_e.ViewModels.MainViewModel.sendAlertCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.MainViewModel.SendAlertCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.MainViewModel.SendAlertCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.MainViewModel.SendAlertAsync"/>.</summary>
+        </member>
+        <member name="T:glove_e.ViewModels.OnboardingViewModel">
+            <summary>
+            ViewModel de la configuración inicial (primera vez que se abre la app).
+            Pide el nombre del usuario y su contacto de emergencia.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:glove_e.ViewModels.OnboardingViewModel.UserName">
+            <inheritdoc cref="F:glove_e.ViewModels.OnboardingViewModel.userName"/>
+        </member>
+        <member name="P:glove_e.ViewModels.OnboardingViewModel.ContactName">
+            <inheritdoc cref="F:glove_e.ViewModels.OnboardingViewModel.contactName"/>
+        </member>
+        <member name="P:glove_e.ViewModels.OnboardingViewModel.ContactPhone">
+            <inheritdoc cref="F:glove_e.ViewModels.OnboardingViewModel.contactPhone"/>
+        </member>
+        <member name="F:glove_e.ViewModels.OnboardingViewModel.continueCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.OnboardingViewModel.ContinueCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.OnboardingViewModel.ContinueCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.OnboardingViewModel.ContinueAsync"/>.</summary>
+        </member>
+        <member name="T:glove_e.ViewModels.SettingsViewModel">
+            <summary>ViewModel de Ajustes: contacto de emergencia, rangos y opciones.</summary>
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:glove_e.ViewModels.SettingsViewModel.SendConfigToGloveAsync">
+            <summary>Envía los rangos al ESP32 por BLE para que el guante use los mismos valores.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.UserName">
+            <inheritdoc cref="F:glove_e.ViewModels.SettingsViewModel.userName"/>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.ContactName">
+            <inheritdoc cref="F:glove_e.ViewModels.SettingsViewModel.contactName"/>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.ContactPhone">
+            <inheritdoc cref="F:glove_e.ViewModels.SettingsViewModel.contactPhone"/>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.RangoMaximo">
+            <inheritdoc cref="F:glove_e.ViewModels.SettingsViewModel.rangoMaximo"/>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.RangoCritico">
+            <inheritdoc cref="F:glove_e.ViewModels.SettingsViewModel.rangoCritico"/>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.GuardarHistorial">
+            <inheritdoc cref="F:glove_e.ViewModels.SettingsViewModel.guardarHistorial"/>
+        </member>
+        <member name="F:glove_e.ViewModels.SettingsViewModel.saveCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.SettingsViewModel.SaveCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.SaveCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.SettingsViewModel.SaveAsync"/>.</summary>
+        </member>
+        <member name="F:glove_e.ViewModels.SettingsViewModel.sendConfigToGloveCommand">
+            <summary>The backing field for <see cref="P:glove_e.ViewModels.SettingsViewModel.SendConfigToGloveCommand"/>.</summary>
+        </member>
+        <member name="P:glove_e.ViewModels.SettingsViewModel.SendConfigToGloveCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:glove_e.ViewModels.SettingsViewModel.SendConfigToGloveAsync"/>.</summary>
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.MostrandoAlertas">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "MostrandoAlertas" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.MostrandoDistancias">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "MostrandoDistancias" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsConnected">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsConnected" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ConnectButtonText">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ConnectButtonText" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.DistanciaTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "DistanciaTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.EstadoTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "EstadoTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.EstadoColor">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "EstadoColor" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.EstadoBrush">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "EstadoBrush" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Saludo">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Saludo" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.UserName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "UserName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ContactName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ContactName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ContactPhone">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ContactPhone" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RangoMaximo">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RangoMaximo" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RangoMaximoTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RangoMaximoTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RangoCritico">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RangoCritico" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.RangoCriticoTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "RangoCriticoTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.GuardarHistorial">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "GuardarHistorial" generated properties.</summary>
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.MostrandoAlertas">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "MostrandoAlertas" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.MostrandoDistancias">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "MostrandoDistancias" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsConnected">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsConnected" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ConnectButtonText">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ConnectButtonText" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.DistanciaTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "DistanciaTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.EstadoTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "EstadoTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.EstadoColor">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "EstadoColor" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.EstadoBrush">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "EstadoBrush" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Saludo">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Saludo" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.UserName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "UserName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ContactName">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ContactName" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ContactPhone">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ContactPhone" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RangoMaximo">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RangoMaximo" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RangoMaximoTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RangoMaximoTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RangoCritico">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RangoCritico" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.RangoCriticoTexto">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "RangoCriticoTexto" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.GuardarHistorial">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "GuardarHistorial" generated properties.</summary>
+        </member>
+    </members>
+</doc>

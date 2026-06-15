@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="glove_e.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:glove_e"
+    xmlns:views="clr-namespace:glove_e.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Glove-E">
+
+    <!-- Configuración inicial (solo la primera vez) -->
+    <ShellContent
+        Route="onboarding"
+        ContentTemplate="{DataTemplate views:OnboardingPage}"
+        FlyoutItemIsVisible="False" />
+
+    <!-- Pantallas principales -->
+    <TabBar>
+        <ShellContent
+            Title="Inicio"
+            Route="inicio"
+            ContentTemplate="{DataTemplate local:MainPage}" />
+        <ShellContent
+            Title="Historial"
+            Route="historial"
+            ContentTemplate="{DataTemplate views:HistoryPage}" />
+        <ShellContent
+            Title="Ajustes"
+            Route="ajustes"
+            ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </TabBar>
+
+</Shell>

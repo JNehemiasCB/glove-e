@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:glove_e.ViewModels"
+             x:Class="glove_e.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="Ajustes">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="25" Spacing="15">
+
+            <Label Text="👤 Perfil" FontSize="18" FontAttributes="Bold" />
+            <Label Text="Tu nombre" FontSize="13" />
+            <Entry Text="{Binding UserName}" Placeholder="Tu nombre" />
+
+            <Label Text="🆘 Contacto de emergencia" FontSize="18" FontAttributes="Bold" Margin="0,15,0,0" />
+            <Label Text="A esta persona se le enviará el mensaje de auxilio." FontSize="12" TextColor="Gray" />
+            <Label Text="Nombre" FontSize="13" />
+            <Entry Text="{Binding ContactName}" Placeholder="Nombre del contacto" />
+            <Label Text="Teléfono" FontSize="13" />
+            <Entry Text="{Binding ContactPhone}" Placeholder="Teléfono" Keyboard="Telephone" />
+
+            <Label Text="📏 Rangos del guante" FontSize="18" FontAttributes="Bold" Margin="0,15,0,0" />
+            <Label Text="{Binding RangoMaximoTexto}" FontSize="13" />
+            <Slider Value="{Binding RangoMaximo}" Minimum="50" Maximum="300" />
+            <Label Text="{Binding RangoCriticoTexto}" FontSize="13" />
+            <Slider Value="{Binding RangoCritico}" Minimum="10" Maximum="90" />
+
+            <Button Text="Enviar rangos al guante (BLE)"
+                    Command="{Binding SendConfigToGloveCommand}"
+                    BackgroundColor="Transparent"
+                    BorderWidth="1" />
+
+            <Label Text="⚙️ Otras opciones" FontSize="18" FontAttributes="Bold" Margin="0,15,0,0" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Guardar historial de distancias"
+                       VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding GuardarHistorial}" />
+            </Grid>
+
+            <Button Text="💾 Guardar configuración"
+                    Command="{Binding SaveCommand}"
+                    HeightRequest="55"
+                    FontSize="16"
+                    Margin="0,20,0,30" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

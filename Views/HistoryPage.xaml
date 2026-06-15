@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:glove_e.ViewModels"
+             xmlns:models="clr-namespace:glove_e.Models"
+             x:Class="glove_e.Views.HistoryPage"
+             x:DataType="vm:HistoryViewModel"
+             Title="Historial">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="15" RowSpacing="10">
+
+        <!-- Selector Distancias / Alertas -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10" HorizontalOptions="Center">
+            <Button Text="📏 Distancias"
+                    Command="{Binding VerDistanciasCommand}" />
+            <Button Text="🚨 Alertas"
+                    Command="{Binding VerAlertasCommand}" />
+        </HorizontalStackLayout>
+
+        <!-- Lista de lecturas de distancia -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Readings}"
+                        IsVisible="{Binding MostrandoDistancias}">
+            <CollectionView.EmptyView>
+                <Label Text="Aún no hay lecturas registradas.&#10;Conéctate al guante en la pestaña Inicio."
+                       HorizontalTextAlignment="Center"
+                       TextColor="Gray"
+                       Margin="0,40,0,0" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:DistanceReading">
+                    <Grid ColumnDefinitions="*,Auto,Auto" Padding="5,8" ColumnSpacing="12">
+                        <Label Grid.Column="0"
+                               Text="{Binding Timestamp, StringFormat='{0:dd/MM HH:mm:ss}'}"
+                               FontSize="13"
+                               TextColor="Gray"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding Centimeters, StringFormat='{0} cm'}"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="2"
+                               Text="{Binding Estado}"
+                               FontSize="13"
+                               VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Estado}" Value="¡CRÍTICO!">
+                                    <Setter Property="TextColor" Value="Red" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding Estado}" Value="Advertencia">
+                                    <Setter Property="TextColor" Value="Orange" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding Estado}" Value="Seguro">
+                                    <Setter Property="TextColor" Value="Green" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Lista de alertas enviadas -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Alerts}"
+                        IsVisible="{Binding MostrandoAlertas}">
+            <CollectionView.EmptyView>
+                <Label Text="No se han enviado alertas de auxilio."
+                       HorizontalTextAlignment="Center"
+                       TextColor="Gray"
+                       Margin="0,40,0,0" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:AlertEvent">
+                    <Border Padding="12" Margin="0,4" StrokeShape="RoundRectangle 10">
+                        <VerticalStackLayout Spacing="3">
+                            <Label Text="{Binding Timestamp, StringFormat='🚨 {0:dd/MM/yyyy HH:mm:ss}'}"
+                                   FontAttributes="Bold" />
+                            <Label FontSize="13">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Enviada a: " FontAttributes="Bold" />
+                                        <Span Text="{Binding ContactName}" />
+                                        <Span Text=" (" />
+                                        <Span Text="{Binding ContactPhone}" />
+                                        <Span Text=")" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label Text="{Binding Message}" FontSize="12" TextColor="Gray" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Grid.Row="2"
+                Text="🗑 Borrar historial de distancias"
+                Command="{Binding ClearReadingsCommand}"
+                IsVisible="{Binding MostrandoDistancias}"
+                BackgroundColor="Transparent"
+                TextColor="Red"
+                BorderColor="Red"
+                BorderWidth="1" />
+    </Grid>
+
+</ContentPage>
